@@ -1,0 +1,55 @@
+library(cells){
+
+    cell (NOT) {
+        pin(A) {
+            direction : input;
+        }
+    
+        pin(Y) {
+            direction : output;
+            function : "A'";
+        }
+    }
+  
+    cell (BUF) {
+        pin(A) {
+            direction : input;
+        }
+        pin(Y) {
+            direction : output;
+            function : "A";
+        }
+    }
+
+    cell (AND2) {
+        pin(A) {
+            direction : input;
+        }
+        pin(B) {
+            direction : input;
+        }
+        pin(Y) {
+            direction: output;
+            function : "(A * B)";
+        }
+    }
+
+    cell (DFF) {
+        pin(D) {
+            direction : input;
+        }	
+        pin(CLK) {
+            direction : input;
+            clock : true;
+        }
+        ff("Q") {
+            clocked_on : "CLK";
+            next_state : "D";
+        }
+        pin(Q) {
+            direction : output;
+            function: "Q";
+        }
+    }
+}
+

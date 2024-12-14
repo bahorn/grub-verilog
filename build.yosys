@@ -1,0 +1,11 @@
+read_verilog ./custom/test.v
+hierarchy -auto-top
+flatten
+proc
+techmap
+clean
+dfflibmap -liberty ./custom/cells.lib
+abc -liberty ./custom/cells.lib
+clean
+stat
+write_json ./custom/out.json
