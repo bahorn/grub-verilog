@@ -50,3 +50,19 @@ Then, I used the json output of the circuit to map it out to a sequence of
 operations.
 The json list is in topological order, so you can just write out the operations
 in the same order, using variables to pass intermediate wire values.
+
+## Usage
+
+Create the config file with:
+```
+./bin/yosys -s ./custom/build.yosys
+python3 ./custom/extract.py ./custom/default.json ./custom/out.json > out.cfg
+```
+
+(I'm running this from a subdir of oss-cad-suite, hence the use of custom being
+the directory.)
+
+Then you can run the out.cfg in grub by just sourcing it (e.g on an emu build):
+```
+source (host)/tmp/out.cfg
+```
