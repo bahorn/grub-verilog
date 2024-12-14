@@ -31,7 +31,12 @@ function AND {
 }
 
 function DFF {
-    if [ $1 = 1 ] ; then set $3=$2 ; fi;
+    if [ $1 = 1 ] ; then
+        eval "set $4=\$$3"
+        set $3=$2
+    else
+        eval "set $4=\$$4"
+    fi
 }
 """
 
@@ -64,7 +69,9 @@ def get_name(name, prefix, v=False):
 
 class Operation:
     NAME = 'nop'
-    ARGS = []
+    ARGS_IN = []
+    ARGS_OUT = []
+    ARGS_STATE = []
 
     def __init__(self, args, prefix='w'):
         base = [self.NAME]
@@ -72,11 +79,16 @@ class Operation:
             # if you library is defined correctly this should never fail.
             assert (len(args[arg]) == 1)
             base.append(get_name(args[arg][0], prefix, True))
+        for arg in self.ARGS_STATE:
+            base.append(get_name(args[arg][0], prefix + '_state'))
         for arg in self.ARGS_OUT:
             assert (len(args[arg]) == 1)
             base.append(get_name(args[arg][0], prefix))
 
         self._str_val = ' '.join(base)
+
+    def state(self):
+        return False
 
     def __str__(self):
         return self._str_val
@@ -103,7 +115,11 @@ class Buf(Operation):
 class FlipFlop(Operation):
     NAME = 'DFF'
     ARGS_IN = ['CLK', 'D']
-    ARGS_OUT = ['Q']
+    ARGS_STATE = ['STATE']
+    ARGS_OUT = ['IQ']
+
+    def state(self):
+        return True
 
 
 def map_to_class(op_type, args, prefix='w'):
@@ -122,18 +138,27 @@ def map_to_class(op_type, args, prefix='w'):
 
 def process_module(mod_name, module, defaults={}):
     cycle_ops = []
-    for _, data in module['cells'].items():
-        cycle_ops.append(
-            map_to_class(data['type'], data['connections'], prefix=mod_name)
-        )
+    state_vars = []
+
+    for idx, (_, data) in enumerate(module['cells'].items()):
+        state = {'STATE': [idx]}
+        state.update(data['connections'])
+        op = map_to_class(data['type'], state, prefix=mod_name)
+        if op.state():
+            state_vars.append(idx)
+        cycle_ops.append(op)
 
     stepf = Function(f'step_{mod_name}', map(str, cycle_ops))
 
     body = []
     body.append(setup_code)
 
+    clk = None
+
     # initializing the circuit values
     for name, data in module['netnames'].items():
+        if name == 'clk':
+            clk = data['bits'][0]
         value = [0]
         if 'init' in data:
             value = list(map(int, data['init']))
@@ -144,6 +169,11 @@ def process_module(mod_name, module, defaults={}):
         for port, v in zip(data['bits'], value):
             tname = get_name(port, mod_name)
             body.append(f'set {tname}={v}')
+
+    body.append('# flip flop states')
+    for var in state_vars:
+        tname = get_name(var, mod_name + '_state')
+        body.append(f'set {tname}=0')
 
     # main loop
     body.append(str(stepf))
@@ -159,6 +189,10 @@ def process_module(mod_name, module, defaults={}):
             map(lambda x: get_name(x, mod_name, True), data['bits'])
         )
         loop_body.append(f'echo {name}: {rest}')
+    # cycling the clk
+    if clk:
+        clk_name = get_name(clk, mod_name)
+        loop_body.append(f'NOT ${clk_name} {clk_name}')
 
     loop_body.append('sleep 1')
     body.append(while_loop('1 = 1', loop_body))

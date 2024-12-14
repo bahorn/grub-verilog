@@ -42,13 +42,13 @@ library(cells){
             direction : input;
             clock : true;
         }
-        ff("Q") {
+        ff(IQ, IQN) {
             clocked_on : "CLK";
             next_state : "D";
         }
-        pin(Q) {
+        pin(IQ) {
             direction : output;
-            function: "Q";
+            function: "IQ";
         }
     }
 }
