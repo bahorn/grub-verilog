@@ -141,7 +141,7 @@ def process_module(mod_name, module, defaults={}):
             map_to_class(data['type'], data['connections'], prefix=mod_name)
         )
 
-    stepf = Function(f'step_{name}', map(str, cycle_ops))
+    stepf = Function(f'step_{mod_name}', map(str, cycle_ops))
 
     body = []
     body.append(setup_code)
