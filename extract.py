@@ -125,8 +125,12 @@ def process_module(mod_name, module, defaults={}):
     in_ports = {}
     out_ports = {}
 
+    all_wires = set()
+
     for name, port in module['ports'].items():
         res = [(i, 0) for i in port['bits']]
+
+        all_wires = all_wires.union(port['bits'])
         if name in defaults:
             combo = zip(port['bits'], defaults[name])
             res = [(i, v) for i, v in combo]
@@ -137,6 +141,8 @@ def process_module(mod_name, module, defaults={}):
 
     cycle_ops = []
     for _, data in module['cells'].items():
+        for _, connection in data['connections'].items():
+            all_wires = all_wires.union(connection)
         cycle_ops.append(
             map_to_class(data['type'], data['connections'], prefix=mod_name)
         )
@@ -146,7 +152,13 @@ def process_module(mod_name, module, defaults={}):
     body = []
     body.append(setup_code)
 
-    # now clear all the wires
+    # clear all the wires in the circuit
+    body.append('# clearing all wires in the circuit')
+    for wire in all_wires:
+        tname = get_name(wire, mod_name)
+        body.append(f'set {tname}=0')
+
+    # now set the default values for input / output wires
     for name, in_port_set in in_ports.items():
         body.append(f'# {name}')
         for in_port, value in in_port_set:
