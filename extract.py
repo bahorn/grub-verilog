@@ -178,9 +178,11 @@ def process_module(mod_name, module, defaults={}):
     # now the loop body
     loop_body = stepf.call()
     loop_body.append('echo')
-    for name, out_port in out_ports.items():
+    for name, data in module['netnames'].items():
+        if data['hide_name'] == 1:
+            continue
         rest = ' '.join(
-            map(lambda x: get_name(x[0], mod_name, True), out_port)
+            map(lambda x: get_name(x, mod_name, True), data['bits'])
         )
         loop_body.append(f'echo {name}: {rest}')
 
