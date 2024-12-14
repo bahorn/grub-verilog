@@ -121,28 +121,8 @@ def map_to_class(op_type, args, prefix='w'):
 
 
 def process_module(mod_name, module, defaults={}):
-    # getting the ports
-    in_ports = {}
-    out_ports = {}
-
-    all_wires = set()
-
-    for name, port in module['ports'].items():
-        res = [(i, 0) for i in port['bits']]
-
-        all_wires = all_wires.union(port['bits'])
-        if name in defaults:
-            combo = zip(port['bits'], defaults[name])
-            res = [(i, v) for i, v in combo]
-        if port['direction'] == 'input':
-            in_ports[name] = res
-        else:
-            out_ports[name] = res
-
     cycle_ops = []
     for _, data in module['cells'].items():
-        for _, connection in data['connections'].items():
-            all_wires = all_wires.union(connection)
         cycle_ops.append(
             map_to_class(data['type'], data['connections'], prefix=mod_name)
         )
@@ -152,24 +132,18 @@ def process_module(mod_name, module, defaults={}):
     body = []
     body.append(setup_code)
 
-    # clear all the wires in the circuit
-    body.append('# clearing all wires in the circuit')
-    for wire in all_wires:
-        tname = get_name(wire, mod_name)
-        body.append(f'set {tname}=0')
+    # initializing the circuit values
+    for name, data in module['netnames'].items():
+        value = [0]
+        if 'init' in data:
+            value = list(map(int, data['init']))
+        if name in defaults:
+            value = defaults[name]
 
-    # now set the default values for input / output wires
-    for name, in_port_set in in_ports.items():
         body.append(f'# {name}')
-        for in_port, value in in_port_set:
-            tname = get_name(in_port, mod_name)
-            body.append(f'set {tname}={value}')
-
-    for name, out_port_set in out_ports.items():
-        body.append(f'# {name}')
-        for out_port, value in out_port_set:
-            tname = get_name(out_port, mod_name)
-            body.append(f'set {tname}={value}')
+        for port, v in zip(data['bits'], value):
+            tname = get_name(port, mod_name)
+            body.append(f'set {tname}={v}')
 
     # main loop
     body.append(str(stepf))
