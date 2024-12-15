@@ -1,0 +1,33 @@
+function not {
+    if [ $1 = 0 ] ; then return 1; fi;
+    return 0
+}
+
+function and {
+    if [ $1 = 0 ] ; then return 0; fi;
+    if [ $2 = 0 ] ; then return 0; fi;
+    return 1
+}
+
+function BUF {
+    set $2=$1
+}
+
+function NOT {
+    not $1
+    set $2=$?
+}
+
+function AND {
+    and $1 $2
+    set $3=$?
+}
+
+function DFF {
+    if [ $1 = 1 ] ; then
+        eval "set $4=\$$3"
+        set $3=$2
+    else
+        eval "set $4=\$$4"
+    fi
+}
