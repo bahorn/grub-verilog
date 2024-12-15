@@ -60,7 +60,7 @@ in the same order, using variables to pass intermediate wire values.
 Create the config file with:
 ```
 ./bin/yosys -s ./custom/build.yosys
-python3 ./custom/extract ./custom/default.json ./custom/out.json > out.cfg
+python3 ./custom/extract grub ./custom/default.json ./custom/out.json > out.cfg
 ```
 
 (I'm running this from a subdir of oss-cad-suite, hence the use of custom being
