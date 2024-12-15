@@ -1,7 +1,7 @@
 """
 GRUB Specific code
 """
-GRUB_CFG_SETUP = './custom/setup.gcfg'
+GRUB_CFG_SETUP = './custom/templates/setup.gcfg'
 
 
 class Function:
