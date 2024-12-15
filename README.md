@@ -8,6 +8,10 @@ I don't actually know verilog, so just using generic test programs for now.
 
 This has bugs and I don't expect anyone to ever want to use this, though it
 might be cool if you wanna map circuits to other weird environments.
+There was the [NSO JBIG2 exploit](https://googleprojectzero.blogspot.com/2021/12/a-deep-dive-into-nso-zero-click.html)
+that constructed logical circuits to emulate a CPU to search memory, so maybe
+with some special cells you could adapt this to do something similar in other
+exploits (just dependent on what cells ABC can work with).
 
 ## A Warning
 
