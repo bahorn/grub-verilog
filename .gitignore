@@ -1,2 +1,4 @@
-more.lib
+old
 *.json
+__pycache__
+*.pyc
