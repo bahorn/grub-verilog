@@ -1,0 +1,11 @@
+read_verilog ./verilog/fib.v
+hierarchy -auto-top
+flatten
+proc
+techmap
+clean
+dfflibmap -liberty ./yosys/grub/cells.lib
+abc -liberty ./yosys/grub/cells.lib
+clean
+stat
+write_json ./out.json

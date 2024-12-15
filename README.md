@@ -59,12 +59,11 @@ in the same order, using variables to pass intermediate wire values.
 
 Create the config file with:
 ```
-./bin/yosys -s ./custom/build.yosys
-python3 ./custom/extract grub ./custom/default.json ./custom/out.json > out.cfg
+./build.sh
 ```
 
-(I'm running this from a subdir of oss-cad-suite, hence the use of custom being
-the directory.)
+Make sure yosys is in your PATH, and modify the `read_verilog` line in
+`yosys/grub/build.yosys` line to change the verilog file used.
 
 Then you can run the out.cfg in grub by just sourcing it (e.g on an emu build):
 ```
