@@ -21,9 +21,6 @@ class Operation:
     def args(self):
         return self._args
 
-    def __str__(self):
-        return self._str_val
-
 
 class Not1(Operation):
     NAME = 'NOT'
@@ -210,9 +207,6 @@ def module_to_grub(module, cycle_clk=True):
         f'step_{module.name()}',
         map(lambda x: op_to_grub(x, module.name()), module.operations()))
     body.append(str(stepf))
-
-    # call once with reset set
-    body += stepf.call()
 
     # now the loop body
     loop_body = stepf.call()
