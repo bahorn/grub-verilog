@@ -1,4 +1,4 @@
-import sys
+import argparse
 import json
 from json import JSONDecoder
 from collections import OrderedDict
@@ -136,14 +136,21 @@ def process_module(target, mod_name, module, defaults={}, cycle_clk=True):
 
 
 def main():
-    defaults = json.load(open(sys.argv[2]))['default_values']
+    parser = argparse.ArgumentParser(description='extract')
+    parser.add_argument('target', type=str)
+    parser.add_argument('--defaults', type=str, default='default.json')
+    parser.add_argument('file')
+
+    args = parser.parse_args()
+
+    defaults = json.load(open(args.defaults))['default_values']
     # need to preseve the order as the json is in topological order, not needed
     # on modern python as dicts should now be order preserving.
     decoder = JSONDecoder(object_pairs_hook=OrderedDict)
-    j = decoder.decode(open(sys.argv[3], 'r').read())
+    j = decoder.decode(open(args.file, 'r').read())
 
     for name, module in j['modules'].items():
-        process_module(sys.argv[1], name, module, defaults=defaults)
+        process_module(args.target, name, module, defaults=defaults)
 
 
 if __name__ == "__main__":
