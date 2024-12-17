@@ -1,5 +1,5 @@
 old
-*.json
 __pycache__
 *.pyc
+out.json
 out.cfg

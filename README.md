@@ -59,11 +59,11 @@ in the same order, using variables to pass intermediate wire values.
 
 Create the config file with:
 ```
-./build.sh
+./build.sh PATH_TO_VERILOG PATH_TO_INPUT
 ```
 
-Make sure yosys is in your PATH, and modify the `read_verilog` line in
-`yosys/grub/build.yosys` line to change the verilog file used.
+Make sure yosys is in your PATH, and write a json file `default.json` to change
+the inputs the circuit.
 
 Then you can run the out.cfg in grub by just sourcing it (e.g on an emu build):
 ```

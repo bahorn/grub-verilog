@@ -1,7 +1,5 @@
 {
     "default_values": {
-        "clk": [0],
-        "init_state": [0,0,0,0,0,1,0,1]
+        "clk": [0]
     }
 }
-
