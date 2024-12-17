@@ -143,12 +143,14 @@ class Module:
 
 
 def process_module(target, mod_name, module, defaults={}, to_print=None,
-                   cycle_clk=True):
+                   cycle_clk=True, new_line=True):
     mod = Module(mod_name, module, defaults)
     match target:
         case 'grub':
             from targets.grub import module_to_grub
-            print(module_to_grub(mod, cycle_clk=cycle_clk, to_print=to_print))
+            print(module_to_grub(
+                mod, cycle_clk=cycle_clk, to_print=to_print, new_line=new_line
+            ))
         case _:
             raise Exception('Unknown Target')
 
@@ -158,6 +160,7 @@ def main():
     parser.add_argument('target', type=str)
     parser.add_argument('--defaults', type=str, default='default.json')
     parser.add_argument('--print', type=str, default=None)
+    parser.add_argument('--new-line', action='store_true', default=False)
     parser.add_argument('--no-cycle', action='store_true', default=False)
     parser.add_argument('file')
 
@@ -178,7 +181,8 @@ def main():
             module,
             defaults=defaults,
             to_print=to_print,
-            cycle_clk=not args.no_cycle
+            cycle_clk=not args.no_cycle,
+            new_line=args.new_line
         )
 
 

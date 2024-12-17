@@ -57,7 +57,7 @@ def op_to_grub(op, prefix):
     return ' '.join(base)
 
 
-def module_to_grub(module, cycle_clk=True, to_print=None):
+def module_to_grub(module, cycle_clk=True, to_print=None, new_line=True):
     """
     Map our module class to a grub configuration.
     """
@@ -85,7 +85,8 @@ def module_to_grub(module, cycle_clk=True, to_print=None):
 
     # now the loop body
     loop_body = stepf.call()
-    # loop_body.append(echo())
+    if new_line:
+        loop_body.append(echo())
 
     if to_print is None:
         for name, bits in module.variables().items():
