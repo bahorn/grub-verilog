@@ -85,6 +85,8 @@ class Module:
 
         self._clk = None
 
+        self._wires['DEFINE_DEFAULT'] = {0: 0, 1: 1}
+
         for vname, data in module['netnames'].items():
             if vname == 'clk':
                 self._clk = data['bits'][0]

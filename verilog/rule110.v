@@ -13,12 +13,9 @@ module rule110 #(parameter WIDTH = 32) (
     end
 
     always @(posedge clk) begin
-        if (!has_been_set) begin
+        if (reset || !has_been_set) begin
             current_state <= init_state;
             has_been_set <= 1;
-        end else if (reset) begin
-            current_state <= init_state;
-            has_been_set <= 0;
         end else begin
             current_state <= {current_state[WIDTH-2:0], current_state[WIDTH-1]};
             for (int i = 0; i < WIDTH; i++) begin
