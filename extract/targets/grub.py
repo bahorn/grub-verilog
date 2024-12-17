@@ -2,6 +2,7 @@
 GRUB Specific code
 """
 GRUB_CFG_SETUP = './templates/setup.gcfg'
+SUPPORTED_OPERATIONS = ['NOT', 'AND', 'OR', 'BUF', 'DFF']
 
 
 class Function:
@@ -61,6 +62,11 @@ def module_to_grub(module, cycle_clk=True, to_print=None, new_line=True):
     """
     Map our module class to a grub configuration.
     """
+    # validate the module only has supported operations
+    for op in module.operations():
+        if op.name() not in SUPPORTED_OPERATIONS:
+            raise Exception(f'Unimplemented Operation {op.name()}')
+
     body = []
     with open(GRUB_CFG_SETUP, 'r') as f:
         body.append(f.read())

@@ -15,6 +15,9 @@ class Operation:
     def state(self):
         return len(self.ARGS_STATE) > 0
 
+    def name(self):
+        return self.NAME
+
     def args(self):
         return self._args
 
