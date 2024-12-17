@@ -2,4 +2,4 @@ old
 *.json
 __pycache__
 *.pyc
-./out.cfg
+out.cfg

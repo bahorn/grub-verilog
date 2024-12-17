@@ -57,7 +57,7 @@ def op_to_grub(op, prefix):
     return ' '.join(base)
 
 
-def module_to_grub(module, cycle_clk=True):
+def module_to_grub(module, cycle_clk=True, to_print=None):
     """
     Map our module class to a grub configuration.
     """
@@ -86,11 +86,20 @@ def module_to_grub(module, cycle_clk=True):
     # now the loop body
     loop_body = stepf.call()
     loop_body.append(echo())
-    for name, bits in module.variables().items():
-        rest = ' '.join(
-            map(lambda x: get_name(x, module.name(), True), bits)
-        )
-        loop_body.append(echo(f'{name}: {rest}'))
+
+    if to_print is None:
+        for name, bits in module.variables().items():
+            rest = ' '.join(
+                map(lambda x: get_name(x, module.name(), True), bits)
+            )
+            loop_body.append(echo(f'{name}: {rest}'))
+    else:
+        for name in to_print:
+            bits = module.variables()[name]
+            rest = ' '.join(
+                map(lambda x: get_name(x, module.name(), True), bits)
+            )
+            loop_body.append(echo(f'{name}: {rest}'))
 
     # cycling the clk
     if module.has_clock() and cycle_clk:

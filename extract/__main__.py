@@ -94,8 +94,15 @@ class Module:
             if vname in defaults:
                 value = defaults[vname]
 
+            if len(value) <= len(data['bits']):
+                diff = len(data['bits']) - len(value)
+                value += diff * [0]
+
+            if vname not in self._wires:
+                self._wires[vname] = {}
+
             for port, v in zip(data['bits'], value):
-                self._wires[vname] = {port: v}
+                self._wires[vname][port] = v
 
             # for printing information
             if data['hide_name'] == 1:
@@ -125,12 +132,13 @@ class Module:
         return self._clk
 
 
-def process_module(target, mod_name, module, defaults={}, cycle_clk=True):
+def process_module(target, mod_name, module, defaults={}, to_print=None,
+                   cycle_clk=True):
     mod = Module(mod_name, module, defaults)
     match target:
         case 'grub':
             from targets.grub import module_to_grub
-            print(module_to_grub(mod, cycle_clk))
+            print(module_to_grub(mod, cycle_clk=cycle_clk, to_print=to_print))
         case _:
             raise Exception('Unknown Target')
 
@@ -139,9 +147,13 @@ def main():
     parser = argparse.ArgumentParser(description='extract')
     parser.add_argument('target', type=str)
     parser.add_argument('--defaults', type=str, default='default.json')
+    parser.add_argument('--print', type=str, default=None)
+    parser.add_argument('--no-cycle', action='store_true', default=False)
     parser.add_argument('file')
 
     args = parser.parse_args()
+
+    to_print = None if not args.print else args.print.split(',')
 
     defaults = json.load(open(args.defaults))['default_values']
     # need to preseve the order as the json is in topological order, not needed
@@ -150,7 +162,14 @@ def main():
     j = decoder.decode(open(args.file, 'r').read())
 
     for name, module in j['modules'].items():
-        process_module(args.target, name, module, defaults=defaults)
+        process_module(
+            args.target,
+            name,
+            module,
+            defaults=defaults,
+            to_print=to_print,
+            cycle_clk=not args.no_cycle
+        )
 
 
 if __name__ == "__main__":
