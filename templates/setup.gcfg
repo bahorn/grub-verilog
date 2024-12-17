@@ -29,11 +29,6 @@ function AND {
     set $3=$?
 }
 
-function XOR {
-    xor $1 $2
-    set $3=$?
-}
-
 function OR {
     or $1 $2
     set $3=$?
