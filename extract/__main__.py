@@ -32,6 +32,12 @@ class And2(Operation):
     ARGS_OUT = ['Y']
 
 
+class Or2(Operation):
+    NAME = 'OR'
+    ARGS_IN = ['A', 'B']
+    ARGS_OUT = ['Y']
+
+
 class Buf(Operation):
     NAME = 'BUF'
     ARGS_IN = ['A']
@@ -51,6 +57,8 @@ def map_to_class(op_type, args):
             return Not1(args)
         case 'AND2':
             return And2(args)
+        case 'OR2':
+            return Or2(args)
         case 'BUF':
             return Buf(args)
         case 'DFF':

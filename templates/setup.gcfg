@@ -9,6 +9,12 @@ function and {
     return 1
 }
 
+function or {
+    if [ $1 = 1 ] ; then return 1; fi;
+    if [ $2 = 1 ] ; then return 1; fi;
+    return 0
+}
+
 function BUF {
     set $2=$1
 }
@@ -20,6 +26,16 @@ function NOT {
 
 function AND {
     and $1 $2
+    set $3=$?
+}
+
+function XOR {
+    xor $1 $2
+    set $3=$?
+}
+
+function OR {
+    or $1 $2
     set $3=$?
 }
 

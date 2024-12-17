@@ -34,6 +34,20 @@ library(cells){
         }
     }
 
+
+    cell (OR2) {
+        pin(A) {
+            direction : input;
+        }
+        pin(B) {
+            direction : input;
+        }
+        pin(Y) {
+            direction: output;
+            function : "(A | B)";
+        }
+    }
+
     cell (DFF) {
         pin(D) {
             direction : input;
