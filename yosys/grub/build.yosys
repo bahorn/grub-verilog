@@ -1,4 +1,4 @@
-read_verilog ./verilog/fib.v
+read_verilog -sv ./verilog/rule110.v
 hierarchy -auto-top
 flatten
 proc

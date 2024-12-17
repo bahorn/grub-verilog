@@ -85,7 +85,7 @@ def module_to_grub(module, cycle_clk=True, to_print=None):
 
     # now the loop body
     loop_body = stepf.call()
-    loop_body.append(echo())
+    # loop_body.append(echo())
 
     if to_print is None:
         for name, bits in module.variables().items():
